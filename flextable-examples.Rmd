@@ -1,0 +1,145 @@
+---
+title: "Examples with {flextable}"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+knit: (function(inputFile, encoding) {
+    rmarkdown::render(inputFile, 
+    output_dir = here::here("outputs"))
+     })
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    number_sections: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(palmerpenguins)
+library(tidyverse)
+library(flextable)
+library(gtsummary)
+
+data(penguins)
+
+penguins <- penguins %>%
+  bstfun::use_varnames_as_labels()
+
+```
+
+# Regular Table
+
+```{r}
+df <- penguins %>% head(n =10)
+
+df %>% flextable()
+
+
+```
+
+
+
+# {gtsummary} Examples
+
+```{r}
+
+penguins %>% 
+  tbl_summary() %>%
+  bold_labels() %>%
+  italicize_levels() %>%
+  as_flex_table()
+```
+
+<br>
+
+
+# With Compact Theme
+
+```{r}
+theme_gtsummary_compact()
+
+penguins %>% 
+  tbl_summary() %>%
+  bold_labels() %>%
+  italicize_levels() %>%
+  as_flex_table()
+
+reset_gtsummary_theme()
+```
+
+# Add Header
+
+```{r}
+penguins %>% 
+  tbl_summary() %>%
+  bold_labels() %>%
+  italicize_levels()  %>%
+  as_flex_table() %>%
+  add_header_row(values = "Title", colwidths = 2)
+
+```
+
+<br>
+
+## Center Title 
+
+```{r}
+penguins %>% 
+  tbl_summary() %>%
+  bold_labels() %>%
+  italicize_levels()  %>%
+  as_flex_table() %>%
+  add_header_row(values = "Title", colwidths = 2) %>%
+  flextable::align(i = 1, part = "header", align = "center")
+
+```
+
+# Spanning Headers
+
+```{r}
+
+sum <- penguins %>%
+  select(species, island, sex) %>%
+  tbl_summary(by = species) %>%
+  add_p()
+
+
+reg <- glm(species ~ island + sex, family = binomial(), data = penguins)
+
+reg <- reg %>%
+  tbl_regression()
+
+tbl_merge(list(sum, reg),
+          tab_spanner = c("**Summary Statistics**", "**Regression***")) %>% as_gt()
+
+# add color by sig p
+
+
+
+```
+
+
+
+
+# Footnotes 
+
+
+# Highlight Specific Values
+
+```{r}
+x <- penguins %>% 
+  tbl_summary() %>%
+  bold_labels() %>%
+  italicize_levels()  %>%
+  as_flex_table() %>%
+  add_header_row(values = "Title", colwidths = 2)
+```
+
+
+```{r}
+x %>%
+  set_text_color(2:1, 1)
+```
+

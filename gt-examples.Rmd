@@ -1,0 +1,132 @@
+---
+title: "Examples with {gt}"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+knit: (function(inputFile, encoding) {
+    rmarkdown::render(inputFile, 
+    output_dir = here::here("outputs"))
+     })
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    number_sections: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(palmerpenguins)
+library(tidyverse)
+library(gt)
+library(gtsummary)
+
+data(penguins)
+
+penguins <- penguins %>%
+  bstfun::use_varnames_as_labels()
+
+theme_gtsummary_compact()
+```
+
+# Regular Table
+
+```{r}
+df <- penguins %>% head(n =10)
+
+df %>% gt()
+
+
+```
+
+
+
+# {gtsummary} Examples
+
+## Default
+
+```{r}
+penguins %>% 
+  tbl_summary() %>%
+  bold_labels() %>%
+  italicize_levels() %>%
+  as_gt()
+```
+
+# With Compact Theme
+
+```{r}
+theme_gtsummary_compact()
+
+penguins %>% 
+  tbl_summary() %>%
+  bold_labels() %>%
+  italicize_levels() %>%
+  as_gt()
+
+reset_gtsummary_theme()
+```
+
+# Add Header
+
+```{r}
+penguins %>% 
+  tbl_summary() %>%
+  bold_labels() %>%
+  italicize_levels()  %>%
+  as_gt() %>%
+  tab_header("Title")
+
+```
+
+
+
+# Spanning Headers
+
+
+
+# Footnotes 
+
+
+# Highlight Specific Values
+
+```{r}
+x <- penguins %>% 
+  tbl_summary() %>%
+  bold_labels() %>%
+  italicize_levels()  %>%
+  as_gt() %>%
+  tab_header("Title")
+```
+
+
+```{r}
+x$`_data` <- x$`_data` %>%
+  mutate(new_cond = parse_number(stat_0)) 
+
+x %>%
+      gt::tab_style(
+        style = list(
+          cell_fill(color = "purple")
+          ),
+        locations = cells_body(
+          columns = stat_0,
+          rows =  new_cond >= 100 
+        )
+      )
+```
+
+
+```{r}
+x %>%
+  mutate(new_cond = parse_number(stat_0)) %>%
+  set_text_color(row = .$new_cond >= 100, 2,  "purple") %>%
+  select(-new_cond)
+```
+
+
+
+# Change Column Name
+
+
