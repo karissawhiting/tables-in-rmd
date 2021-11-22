@@ -6,12 +6,7 @@ knit: (function(inputFile, encoding) {
     output_dir = here::here("outputs"))
      })
 output:
-  html_document:
-    toc: yes
-    toc_float: yes
-    number_sections: true
-editor_options: 
-  chunk_output_type: console
+  pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -29,13 +24,12 @@ data(penguins)
 penguins <- penguins %>%
   bstfun::use_varnames_as_labels()
 
-theme_gtsummary_compact()
 
 ```
 
 # Regular Table
 
-```{r}
+```{r }
 df <- penguins %>% head(n =10)
 
 df %>% huxtable()
@@ -47,7 +41,7 @@ df %>% huxtable()
 
 # {gtsummary} Examples
 
-```{r}
+```{r, results = 'asis'}
 penguins %>% 
   tbl_summary() %>%
   bold_labels() %>%
@@ -59,7 +53,7 @@ penguins %>%
 # With Compact Theme
 
 ```{r}
-theme_gtsummary_compact()
+#theme_gtsummary_compact()
 
 penguins %>% 
   tbl_summary() %>%
@@ -67,7 +61,7 @@ penguins %>%
   italicize_levels() %>%
   as_hux_table()
 
-reset_gtsummary_theme()
+#reset_gtsummary_theme()
 ```
 
 # Add Header
@@ -99,10 +93,7 @@ x <- penguins %>%
   italicize_levels()  %>%
   as_hux_table() %>%
   set_caption("Title") 
-```
 
-
-```{r}
 x %>%
   set_text_color(3, 2, "purple")
 ```

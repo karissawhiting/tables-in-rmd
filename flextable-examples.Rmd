@@ -1,15 +1,6 @@
 ---
 title: "Examples with {flextable}"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
-knit: (function(inputFile, encoding) {
-    rmarkdown::render(inputFile, 
-    output_dir = here::here("outputs"))
-     })
-output:
-  html_document:
-    toc: yes
-    toc_float: yes
-    number_sections: true
 editor_options: 
   chunk_output_type: console
 ---
@@ -98,7 +89,7 @@ penguins %>%
 
 # Spanning Headers
 
-```{r}
+```{r, eval = FALSE}
 
 sum <- penguins %>%
   select(species, island, sex) %>%
@@ -117,13 +108,14 @@ tbl_merge(list(sum, reg),
 # add color by sig p
 
 
-
 ```
 
 
-
-
 # Footnotes 
+
+```{r}
+
+```
 
 
 # Highlight Specific Values
@@ -137,9 +129,5 @@ x <- penguins %>%
   add_header_row(values = "Title", colwidths = 2)
 ```
 
-
-```{r}
-x %>%
-  set_text_color(2:1, 1)
-```
+# Saving Quickly 
 
