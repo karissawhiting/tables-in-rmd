@@ -9,6 +9,7 @@ output:
   pdf_document
 ---
 
+
 ```{r setup, include=FALSE}
 
 knitr::opts_chunk$set(echo = TRUE)
@@ -24,36 +25,57 @@ data(penguins)
 penguins <- penguins %>%
   bstfun::use_varnames_as_labels()
 
-
 ```
 
-# Regular Table
+# Print a plain dataframe 
 
 ```{r }
-df <- penguins %>% head(n =10)
+df <- penguins %>% 
+  head(n =10)
 
 df %>% huxtable()
 
-
 ```
 
 
+
+# Print a Plain Dataframe 
+
+```{r }
+penguins %>% 
+  tbl_summary() %>%
+  bold_labels() %>%
+  italicize_levels() %>%
+  as_hux_table()
+```
 
 # {gtsummary} Examples
 
-```{r, results = 'asis'}
-penguins %>% 
-  tbl_summary() %>%
-  bold_labels() %>%
-  italicize_levels() %>%
-  as_hux_table()
-```
+## Default Print Engine
 
-
-# With Compact Theme
+Example where we don't specify print engine:
 
 ```{r}
-#theme_gtsummary_compact()
+penguins %>% 
+  tbl_summary() %>%
+  bold_labels() %>%
+  italicize_levels()
+```
+
+## Specify Print Engine
+
+```{r}
+penguins %>% 
+  tbl_summary() %>%
+  bold_labels() %>%
+  italicize_levels() %>%
+  as_hux_table()
+```
+
+## With Compact Theme
+
+```{r}
+theme_gtsummary_compact()
 
 penguins %>% 
   tbl_summary() %>%
@@ -61,10 +83,10 @@ penguins %>%
   italicize_levels() %>%
   as_hux_table()
 
-#reset_gtsummary_theme()
+reset_gtsummary_theme()
 ```
 
-# Add Header
+## Add Header
 
 ```{r}
 penguins %>% 
@@ -77,14 +99,25 @@ penguins %>%
 ```
 
 
-# Spanning Headers
+## Add Footnotes 
+
+```{r}
+
+x <- penguins %>% 
+  tbl_summary() %>%
+  bold_labels() %>%
+  italicize_levels() %>%
+  as_hux_table() %>%
+  add_footnote(.,
+               text = "Custom Footnote")
 
 
+```
 
-# Footnotes 
 
+## Highlight Specific Values
 
-# Highlight Specific Values
+Two ways to do this below:
 
 ```{r}
 x <- penguins %>% 
@@ -95,28 +128,24 @@ x <- penguins %>%
   set_caption("Title") 
 
 x %>%
-  set_text_color(3, 2, "purple")
+  set_text_color(
+    c(1:2, 4:5, 12,14, 16:17, 19:21), 2,
+    "purple")
 ```
-
 
 
 ```{r}
 x %>%
   mutate(new_cond = parse_number(stat_0)) %>%
-  set_text_color(row = .$new_cond >= 100, 2,  "purple") %>%
+  set_text_color(
+    row = .$new_cond >= 100, 2,  "purple") %>%
   select(-new_cond)
 ```
 
-# Spanning Headers
+## Merged Tables with Spanning Headers
 
 ```{r}
-
 sum <- penguins %>%
-  select(species, island, sex) %>%
-  tbl_summary(by = species) %>%
-  add_p()
-
-sum2 <- penguins %>%
   select(species, island, sex) %>%
   tbl_summary(by = species) %>%
   add_p()
@@ -128,14 +157,10 @@ reg <- reg %>%
   tbl_regression()
 
 tbl_merge(list(sum, reg),
-          tab_spanner = c("**Summary Statistics**", "**Regression**")) %>% 
-  as_hux_table() %>%
-  set_all_borders()
-
-
-
+          tab_spanner = c("**Summary Statistics**", "**Regression***")) %>% 
+  
+  as_hux_table()
 
 ```
 
-# More Complex Merges (includinf 3 header rows)
-
+# Saving Quickly 

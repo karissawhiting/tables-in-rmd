@@ -1,8 +1,12 @@
 ---
 title: "Examples with {flextable}"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
-editor_options: 
-  chunk_output_type: console
+knit: (function(inputFile, encoding) {
+    rmarkdown::render(inputFile, 
+    output_dir = here::here("outputs"))
+     })
+output:
+  pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -20,22 +24,33 @@ penguins <- penguins %>%
 
 ```
 
-# Regular Table
+# Print a Plain Dataframe
 
 ```{r}
-df <- penguins %>% head(n =10)
+df <- penguins %>% 
+  head(n =10)
 
 df %>% flextable()
-
 
 ```
 
 
-
 # {gtsummary} Examples
 
-```{r}
+## Default Print Engine
 
+Example where we don't specify print engine:
+
+```{r}
+penguins %>% 
+  tbl_summary() %>%
+  bold_labels() %>%
+  italicize_levels()
+```
+
+## Specify Print Engine
+
+```{r}
 penguins %>% 
   tbl_summary() %>%
   bold_labels() %>%
@@ -43,10 +58,7 @@ penguins %>%
   as_flex_table()
 ```
 
-<br>
-
-
-# With Compact Theme
+## With Compact Theme
 
 ```{r}
 theme_gtsummary_compact()
@@ -60,7 +72,7 @@ penguins %>%
 reset_gtsummary_theme()
 ```
 
-# Add Header
+## Add Header
 
 ```{r}
 penguins %>% 
@@ -74,23 +86,30 @@ penguins %>%
 
 <br>
 
-## Center Title 
+## Add Footnotes 
 
 ```{r}
-penguins %>% 
+
+x <- penguins %>% 
   tbl_summary() %>%
   bold_labels() %>%
-  italicize_levels()  %>%
+  italicize_levels() %>%
   as_flex_table() %>%
-  add_header_row(values = "Title", colwidths = 2) %>%
-  flextable::align(i = 1, part = "header", align = "center")
+  footnote(., i = 1, j =1,
+           value = as_paragraph("Custom Footnote"))
 
 ```
 
-# Spanning Headers
+## Highlight Specific Values
 
-```{r, eval = FALSE}
+```{r}
 
+```
+
+
+## Merged Tables with Spanning Headers
+
+```{r}
 sum <- penguins %>%
   select(species, island, sex) %>%
   tbl_summary(by = species) %>%
@@ -103,30 +122,10 @@ reg <- reg %>%
   tbl_regression()
 
 tbl_merge(list(sum, reg),
-          tab_spanner = c("**Summary Statistics**", "**Regression***")) %>% as_gt()
+          tab_spanner = c("**Summary Statistics**", "**Regression***")) %>% 
+  
+  as_flex_table()
 
-# add color by sig p
-
-
-```
-
-
-# Footnotes 
-
-```{r}
-
-```
-
-
-# Highlight Specific Values
-
-```{r}
-x <- penguins %>% 
-  tbl_summary() %>%
-  bold_labels() %>%
-  italicize_levels()  %>%
-  as_flex_table() %>%
-  add_header_row(values = "Title", colwidths = 2)
 ```
 
 # Saving Quickly 

@@ -6,9 +6,7 @@ knit: (function(inputFile, encoding) {
     output_dir = here::here("outputs"))
      })
 output:
-  word_document:
-editor_options: 
-  chunk_output_type: console
+  pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -16,9 +14,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(palmerpenguins)
 library(tidyverse)
-library(huxtable)
 library(gtsummary)
 library(labelled)
+library(gt)
 
 data(penguins)
 
@@ -27,21 +25,22 @@ penguins <- penguins %>%
 
 ```
 
-# Regular Table
+# Print a Plain Dataframe 
 
 ```{r}
-df <- penguins %>% head(n =10)
+df <- penguins %>% 
+  head(n =10)
 
 df %>% gt()
-
 
 ```
 
 
-
 # {gtsummary} Examples
 
-## Default
+## Default Print Engine
+
+Example where we don't specify print engine:
 
 ```{r}
 penguins %>% 
@@ -49,6 +48,8 @@ penguins %>%
   bold_labels() %>%
   italicize_levels()
 ```
+
+## Specify Print Engine
 
 ```{r}
 penguins %>% 
@@ -72,7 +73,7 @@ penguins %>%
 reset_gtsummary_theme()
 ```
 
-# Add Header
+## Add Header
 
 ```{r}
 penguins %>% 
@@ -85,13 +86,27 @@ penguins %>%
 ```
 
 
+## Add Footnotes 
 
-# Spanning Headers
+```{r}
 
+x <- penguins %>% 
+ tbl_summary() %>%
+ bold_labels() %>%
+ italicize_levels()  %>%
+ as_gt() 
 
+# To inspect internals of gt object you can do:
+#x$`_data`
 
-# Footnotes 
+x %>%
+  tab_footnote(
+    footnote = "Custom Footnote",
+    locations = cells_column_labels(
+      columns = label
+    ))
 
+```
 
 # Highlight Specific Values
 
@@ -131,8 +146,25 @@ x %>%
   select(-new_cond)
 ```
 
+## Merged Tables with Spanning Headers
+
+```{r}
+sum <- penguins %>%
+  select(species, island, sex) %>%
+  tbl_summary(by = species) %>%
+  add_p()
 
 
-# Change Column Name
+reg <- glm(species ~ island + sex, family = binomial(), data = penguins)
 
+reg <- reg %>%
+  tbl_regression()
 
+tbl_merge(list(sum, reg),
+          tab_spanner = c("**Summary Statistics**", "**Regression***")) %>% 
+  
+  as_gt()
+
+```
+
+# Saving Quickly 
