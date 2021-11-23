@@ -11,9 +11,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Coding Workshop: Tables in RMarkdown 2021-11-18
+# Coding Workshop: Tables in RMarkdown \n2021-11-18
 
-## Pros and Cons
+## Pros and Cons of Table Packages
 
 ### {gt}
     - Pro: Looks really good by default (best looking html in my opinion!)
@@ -21,18 +21,17 @@ knitr::opts_chunk$set(
     - Pro: Can use tidyselect to select data rows/cols. Generally adheres to tidyverse style guide 
     - Pro: Great documentation 
     - Con: Word not yet supported, PDF/RTF under development BUT gtsummary objects will automatically default to other print engines so you can knit to other outputs. Non-gtsummary objects will just not print in final document. 
-    - Con: Can't have more than 2 spanning headers - although gt will support this soon. 
+    - Con: Can't have more than 2 spanning headers - although gt will support this soon
 
 ### {huxtable}
     - Pro: Works well with html, pdf, rtf and word outputs
-    - Pro: Can quick save tables as well
     - Pro: You can save the latex code with the `as_latex()` directly- helpful when you have to write docs with latex
     - Con: I find the documentation confusing
     - Con: Default settings are not as nice looking as flextable and gt (although once you add compact theme they look better)
     - Con: For gtsummary tables, you may lose the footnote numbering. Footnote still appears but without numbers
     - Con: Hux table doesn’t let you see it in the viewer like gt. Prints as markdown, making it harder to preview
     - Con: Footnotes have limited support
-    - Con: While gtsummary does a lot of the  leg work customizing tables for gtsummary objects, non-gtsummary tables can be cumbesome to try to customize 
+    - Con: While gtsummary does a lot of the leg work customizing tables for gtsummary objects, non-gtsummary tables can be cumbesome to try to customize 
     
     
 ### {flextable}
@@ -40,7 +39,6 @@ knitr::opts_chunk$set(
     - Pro: Works well with html and pdf. Best word output in my opinion
     - Pro: Great documentation 
     - Con: Can't use tidyselect to index rows/cols
-    - Con: A little cumbersome to quick save tables. it uses webshot to take a screen shot 
     
     
 ### {kable} + {kableExtra}
@@ -53,3 +51,15 @@ knitr::opts_chunk$set(
 - flextable works well for Word and PowerPoint. While PDF is technically supported, flextable just makes an image and puts it into a PDF document.
 
 - huxtable is best for the LaTeX output (which includes PDF). Has a lot of output options but doesn't look as good right out of the box. 
+
+# Resources
+
+- gt documention: https://gt.rstudio.com/ 
+- flextable documentation: https://ardata-fr.github.io/flextable-book/
+- huxtable documentation: https://hughjonesd.github.io/huxtable/reference/index.html
+
+-gtsummary + RMarkdown: https://www.danieldsjoberg.com/gtsummary/articles/rmarkdown.html 
+
+- flextable complex table: https://stackoverflow.com/questions/70059022/reproduce-a-complex-table-with-double-headesrs/70072503#70072503 
+- `bstfun::style_tbl_compact()`
+
