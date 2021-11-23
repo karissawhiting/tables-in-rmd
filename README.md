@@ -53,16 +53,19 @@
 # Resources
 
 -   gt documention: <https://gt.rstudio.com/>
+
 -   flextable documentation:
     <https://ardata-fr.github.io/flextable-book/>
+
 -   huxtable documentation:
     <https://hughjonesd.github.io/huxtable/reference/index.html>
 
--gtsummary + RMarkdown:
-<https://www.danieldsjoberg.com/gtsummary/articles/rmarkdown.html>
+-   gtsummary + RMarkdown:
+    <https://www.danieldsjoberg.com/gtsummary/articles/rmarkdown.html>
 
 -   flextable complex table:
     <https://stackoverflow.com/questions/70059022/reproduce-a-complex-table-with-double-headesrs/70072503#70072503>
+
 -   `bstfun::style_tbl_compact()`
 
 # Some Formatting/Spacing Functions for Word/PDF Outputs
