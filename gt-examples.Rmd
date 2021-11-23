@@ -6,7 +6,7 @@ knit: (function(inputFile, encoding) {
     output_dir = here::here("outputs"))
      })
 output:
-  pdf_document
+  word_document
 ---
 
 ```{r setup, include=FALSE}

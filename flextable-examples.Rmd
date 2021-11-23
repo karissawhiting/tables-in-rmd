@@ -6,7 +6,7 @@ knit: (function(inputFile, encoding) {
     output_dir = here::here("outputs"))
      })
 output:
-  pdf_document
+  word_document
 ---
 
 ```{r setup, include=FALSE}
@@ -102,7 +102,7 @@ x$body$dataset <- x$body$dataset %>%
 x %>%
   flextable::bg(
     i = .$body$dataset$new_cond >= 50,
-    j = "label",
+    j = "stat_1",
     bg = "purple"
   ) %>%
   flextable::bg(

@@ -6,7 +6,7 @@ knit: (function(inputFile, encoding) {
     output_dir = here::here("outputs"))
      })
 output:
-  pdf_document
+  word_document
 ---
 
 
@@ -72,7 +72,9 @@ penguins %>%
 reset_gtsummary_theme()
 ```
 
+
 # {gtsummary} Example: Add Title
+
 
 ```{r}
 penguins %>% 
@@ -92,23 +94,24 @@ x <- penguins %>%
   add_p() %>%
   bold_labels() %>%
   italicize_levels() %>%
-  as_hux_table() %>%
-  huxtable::set_caption("Title") 
+  as_hux_table() 
 
 x <- x %>%
-  mutate(new_cond = parse_number(stat_1))
+  mutate(new_cond = parse_number(stat_1)) %>%
+  mutate(p_val_numeric = parse_number(p.value))
 
 x %>%
   set_background_color(
-    row = .$new_cond >= 100,
+    row = .$new_cond >= 50,
+    col = "stat_1",
     value = "purple") %>%
   
   set_background_color(
-    row = .$p.value >=  0.05,
+    row = .$p_val_numeric <=  0.05,
     value = "red") %>%
   
   # have to de-select new column made for calculating
-  select(-new_cond)
+  select(-c(new_cond, p_val_numeric))
 ```
 
 # {gtsummary} Example: Merged Tables with Spanning Headers
