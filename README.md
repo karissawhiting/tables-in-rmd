@@ -64,3 +64,7 @@
 -   flextable complex table:
     <https://stackoverflow.com/questions/70059022/reproduce-a-complex-table-with-double-headesrs/70072503#70072503>
 -   `bstfun::style_tbl_compact()`
+
+# Some Formatting/Spacing Functions for Word/PDF Outputs
+
+-   huxtable: `width(table)` &lt;- 0.8

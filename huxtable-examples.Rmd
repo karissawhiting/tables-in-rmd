@@ -6,7 +6,7 @@ knit: (function(inputFile, encoding) {
     output_dir = here::here("outputs"))
      })
 output:
-  word_document
+  pdf_document
 ---
 
 
@@ -33,8 +33,11 @@ penguins <- penguins %>%
 df <- penguins %>% 
   head(n =10)
 
-df %>% huxtable()
+x <- df %>% huxtable()
 
+width(x) <-  0.8
+
+x
 ```
 
 # {gtsummary} Example: Default Print Engine
@@ -100,7 +103,7 @@ x <- x %>%
   mutate(new_cond = parse_number(stat_1)) %>%
   mutate(p_val_numeric = parse_number(p.value))
 
-x %>%
+x <- x %>%
   set_background_color(
     row = .$new_cond >= 50,
     col = "stat_1",
@@ -112,6 +115,11 @@ x %>%
   
   # have to de-select new column made for calculating
   select(-c(new_cond, p_val_numeric))
+
+
+width(x) <-  0.9
+
+x
 ```
 
 # {gtsummary} Example: Merged Tables with Spanning Headers
@@ -144,7 +152,6 @@ x <- tbl_merge(list(sum, reg, reg2),
   
   as_hux_table() 
 
-# another spanner
 
 x
 ```
