@@ -36,9 +36,7 @@ df %>% gt()
 ```
 
 
-# {gtsummary} Examples
-
-## Default Print Engine
+# {gtsummary} Example: Default Print Engine
 
 Example where we don't specify print engine:
 
@@ -49,7 +47,7 @@ penguins %>%
   italicize_levels()
 ```
 
-## Specify Print Engine
+# {gtsummary} Example: Specify Print Engine
 
 ```{r}
 penguins %>% 
@@ -59,7 +57,7 @@ penguins %>%
   as_gt()
 ```
 
-# With Compact Theme
+# {gtsummary} Example: With Compact Theme
 
 ```{r}
 theme_gtsummary_compact()
@@ -73,7 +71,7 @@ penguins %>%
 reset_gtsummary_theme()
 ```
 
-## Add Header
+# {gtsummary} Example: Add Title
 
 ```{r}
 penguins %>% 
@@ -85,53 +83,40 @@ penguins %>%
 
 ```
 
-
-## Add Footnotes 
-
-```{r}
-
-x <- penguins %>% 
- tbl_summary() %>%
- bold_labels() %>%
- italicize_levels()  %>%
- as_gt() 
-
-# To inspect internals of gt object you can do:
-#x$`_data`
-
-x %>%
-  tab_footnote(
-    footnote = "Custom Footnote",
-    locations = cells_column_labels(
-      columns = label
-    ))
-
-```
-
-# Highlight Specific Values
+# {gtsummary} Example: Highlight Specific Values
 
 ```{r}
 x <- penguins %>% 
-  tbl_summary() %>%
+  tbl_summary(by = species) %>%
+  add_p() %>%
   bold_labels() %>%
   italicize_levels()  %>%
   as_gt() %>%
   tab_header("Title")
-```
 
+# To inspect internals of gt object you can do:
+#x$`_data`
 
-```{r}
 x$`_data` <- x$`_data` %>%
-  mutate(new_cond = parse_number(stat_0)) 
+  mutate(new_cond = parse_number(stat_1)) 
 
 x %>%
-      gt::tab_style(
+  gt::tab_style(
         style = list(
           cell_fill(color = "purple")
           ),
         locations = cells_body(
-          columns = stat_0,
-          rows =  new_cond >= 100 
+          columns = stat_1,
+          rows =  new_cond >= 50 
+        )
+      ) %>%
+      gt::tab_style(
+        style = list(
+          cell_fill(color = "red")
+          ),
+        locations = cells_body(
+          columns = everything(),
+          rows =  p.value <=  0.05 
         )
       )
 
@@ -146,7 +131,7 @@ x %>%
   select(-new_cond)
 ```
 
-## Merged Tables with Spanning Headers
+# {gtsummary} Example: Merged Tables with Spanning Headers
 
 ```{r}
 sum <- penguins %>%
@@ -155,16 +140,69 @@ sum <- penguins %>%
   add_p()
 
 
-reg <- glm(species ~ island + sex, family = binomial(), data = penguins)
+reg <- glm(species ~ island + sex,
+           family = binomial(), data = penguins) %>%
+  tbl_regression(exponentiate = TRUE)
 
-reg <- reg %>%
-  tbl_regression()
+reg2 <- penguins %>%
+  # species limited to certain islands
+  select(-island) %>%
+  tbl_uvregression(
+  method = glm,
+  y = species, 
+  exponentiate = TRUE, 
+  method.args = list(family = binomial())
+)
 
-tbl_merge(list(sum, reg),
-          tab_spanner = c("**Summary Statistics**", "**Regression***")) %>% 
+x <- tbl_merge(list(sum, reg, reg2),
+          tab_spanner = 
+            c("**Summary Statistics**", "**Univariate***", 
+              "**Multivariate***")) %>% 
   
-  as_gt()
+  as_gt() 
+
+# another spanner not possible yet
+# x %>%
+#   tab_spanner(
+#     label = "performance",
+#     columns = everything()
+#   )
+
+
+x
+```
+
+
+# Add Footnotes 
+
+```{r}
+
+x <- penguins %>% 
+  head(n = 10) %>%
+  gt() 
+
+
+x %>%
+  tab_footnote(
+    footnote = "island Custom Footnote",
+    locations = cells_column_labels(
+      columns = island
+    )) %>%
+  tab_footnote(
+    footnote = "species Custom Footnote",
+    locations = cells_column_labels(
+      columns = species
+    ))
 
 ```
 
 # Saving Quickly 
+
+Produces either an HTML, PDF, PNG, LaTeX, or RTF file.
+
+```{r}
+gtsave(x,
+       filename = here::here("outputs",     
+                             "gt-quick-table.pdf"))
+```
+

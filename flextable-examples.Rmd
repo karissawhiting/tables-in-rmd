@@ -35,9 +35,7 @@ df %>% flextable()
 ```
 
 
-# {gtsummary} Examples
-
-## Default Print Engine
+# {gtsummary} Example: Default Print Engine
 
 Example where we don't specify print engine:
 
@@ -48,7 +46,7 @@ penguins %>%
   italicize_levels()
 ```
 
-## Specify Print Engine
+# {gtsummary} Example: Specify Print Engine
 
 ```{r}
 penguins %>% 
@@ -58,7 +56,7 @@ penguins %>%
   as_flex_table()
 ```
 
-## With Compact Theme
+# {gtsummary} Example: With Compact Theme
 
 ```{r}
 theme_gtsummary_compact()
@@ -72,7 +70,7 @@ penguins %>%
 reset_gtsummary_theme()
 ```
 
-## Add Header
+# {gtsummary} Example: Add Title
 
 ```{r}
 penguins %>% 
@@ -84,30 +82,39 @@ penguins %>%
 
 ```
 
-<br>
-
-## Add Footnotes 
+# {gtsummary} Example: Highlight Specific Values
 
 ```{r}
-
 x <- penguins %>% 
-  tbl_summary() %>%
+  tbl_summary(by = species) %>%
+  add_p() %>%
   bold_labels() %>%
   italicize_levels() %>%
   as_flex_table() %>%
-  footnote(., i = 1, j =1,
-           value = as_paragraph("Custom Footnote"))
+  add_header_row(values = "Title", colwidths = 5)
+
+# To inspect internals of gt object you can do:
+# x$body$dataset
+
+x$body$dataset <- x$body$dataset %>%
+  mutate(new_cond = parse_number(stat_1)) 
+
+x %>%
+  flextable::bg(
+    i = .$body$dataset$new_cond >= 50,
+    j = "label",
+    bg = "purple"
+  ) %>%
+  flextable::bg(
+    i = .$body$dataset$p.value <= 0.05,
+#    j = "label",
+    bg = "red"
+  )
+
 
 ```
 
-## Highlight Specific Values
-
-```{r}
-
-```
-
-
-## Merged Tables with Spanning Headers
+# {gtsummary} Example: Merged Tables with Spanning Headers
 
 ```{r}
 sum <- penguins %>%
@@ -116,17 +123,59 @@ sum <- penguins %>%
   add_p()
 
 
-reg <- glm(species ~ island + sex, family = binomial(), data = penguins)
+reg <- glm(species ~ island + sex,
+           family = binomial(), data = penguins) %>%
+  tbl_regression(exponentiate = TRUE)
 
-reg <- reg %>%
-  tbl_regression()
+reg2 <- penguins %>%
+  # species limited to certain islands
+  select(-island) %>%
+  tbl_uvregression(
+  method = glm,
+  y = species, 
+  exponentiate = TRUE, 
+  method.args = list(family = binomial())
+)
 
-tbl_merge(list(sum, reg),
-          tab_spanner = c("**Summary Statistics**", "**Regression***")) %>% 
+x <- tbl_merge(list(sum, reg, reg2),
+          tab_spanner = 
+            c("**Summary Statistics**", "**Univariate***", 
+              "**Multivariate***")) %>% 
   
-  as_flex_table()
+  as_flex_table() 
+
+# another spanner
+
+x
+```
+
+# Add Footnotes 
+
+Note: need to specify `part = header` to get in header
+
+```{r}
+
+x <- penguins %>% 
+  head(n = 10) %>%
+  flextable() 
+
+x %>%
+  footnote(.,
+           i = 1,
+           j = "island",
+            part = "header",
+           value = as_paragraph("Custom Footnote"))
 
 ```
 
 # Saving Quickly 
+
+```{r}
+save_as_docx(x, path = here::here("outputs",     
+                             "flextable-quick-table.docx"), pr_section = NULL)
+
+
+#save_as_html()
+#save_as_image()
+```
 

@@ -37,21 +37,7 @@ df %>% huxtable()
 
 ```
 
-
-
-# Print a Plain Dataframe 
-
-```{r }
-penguins %>% 
-  tbl_summary() %>%
-  bold_labels() %>%
-  italicize_levels() %>%
-  as_hux_table()
-```
-
-# {gtsummary} Examples
-
-## Default Print Engine
+# {gtsummary} Example: Default Print Engine
 
 Example where we don't specify print engine:
 
@@ -62,7 +48,7 @@ penguins %>%
   italicize_levels()
 ```
 
-## Specify Print Engine
+# {gtsummary} Example: Specify Print Engine
 
 ```{r}
 penguins %>% 
@@ -72,7 +58,7 @@ penguins %>%
   as_hux_table()
 ```
 
-## With Compact Theme
+# {gtsummary} Example: With Compact Theme
 
 ```{r}
 theme_gtsummary_compact()
@@ -86,7 +72,7 @@ penguins %>%
 reset_gtsummary_theme()
 ```
 
-## Add Header
+# {gtsummary} Example: Add Title
 
 ```{r}
 penguins %>% 
@@ -98,51 +84,34 @@ penguins %>%
 
 ```
 
-
-## Add Footnotes 
+# {gtsummary} Example: Highlight Specific Values
 
 ```{r}
-
 x <- penguins %>% 
-  tbl_summary() %>%
+  tbl_summary(by = species) %>%
+  add_p() %>%
   bold_labels() %>%
   italicize_levels() %>%
   as_hux_table() %>%
-  add_footnote(.,
-               text = "Custom Footnote")
+  huxtable::set_caption("Title") 
 
-
-```
-
-
-## Highlight Specific Values
-
-Two ways to do this below:
-
-```{r}
-x <- penguins %>% 
-  tbl_summary() %>%
-  bold_labels() %>%
-  italicize_levels()  %>%
-  as_hux_table() %>%
-  set_caption("Title") 
+x <- x %>%
+  mutate(new_cond = parse_number(stat_1))
 
 x %>%
-  set_text_color(
-    c(1:2, 4:5, 12,14, 16:17, 19:21), 2,
-    "purple")
-```
-
-
-```{r}
-x %>%
-  mutate(new_cond = parse_number(stat_0)) %>%
-  set_text_color(
-    row = .$new_cond >= 100, 2,  "purple") %>%
+  set_background_color(
+    row = .$new_cond >= 100,
+    value = "purple") %>%
+  
+  set_background_color(
+    row = .$p.value >=  0.05,
+    value = "red") %>%
+  
+  # have to de-select new column made for calculating
   select(-new_cond)
 ```
 
-## Merged Tables with Spanning Headers
+# {gtsummary} Example: Merged Tables with Spanning Headers
 
 ```{r}
 sum <- penguins %>%
@@ -151,16 +120,65 @@ sum <- penguins %>%
   add_p()
 
 
-reg <- glm(species ~ island + sex, family = binomial(), data = penguins)
+reg <- glm(species ~ island + sex,
+           family = binomial(), data = penguins) %>%
+  tbl_regression(exponentiate = TRUE)
 
-reg <- reg %>%
-  tbl_regression()
+reg2 <- penguins %>%
+  # species limited to certain islands
+  select(-island) %>%
+  tbl_uvregression(
+  method = glm,
+  y = species, 
+  exponentiate = TRUE, 
+  method.args = list(family = binomial())
+)
 
-tbl_merge(list(sum, reg),
-          tab_spanner = c("**Summary Statistics**", "**Regression***")) %>% 
+x <- tbl_merge(list(sum, reg, reg2),
+          tab_spanner = 
+            c("**Summary Statistics**", "**Univariate***", 
+              "**Multivariate***")) %>% 
   
-  as_hux_table()
+  as_hux_table() 
+
+# another spanner
+
+x
+```
+
+# Add Footnotes 
+
+Couldn't specify position of footnote 
+
+```{r}
+x <- penguins %>% 
+  head(n = 10) %>%
+  hux() 
+
+x %>%
+  add_footnote(.,
+               text = "Custom Footnote")
+
 
 ```
 
+
 # Saving Quickly 
+
+print objects to a PDF, TeX, HTML, Microsoft Office or RTF
+
+```{r, eval = FALSE}
+huxtable::quick_pdf(x,
+                     here::here("outputs",
+                                "hux-quick-table.pdf"))
+
+
+#huxtable::quick_latex()
+#huxtable::quick_pdf()
+#huxtable::quick_docx()
+
+
+```
+
+
+
