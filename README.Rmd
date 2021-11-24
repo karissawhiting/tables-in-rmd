@@ -85,7 +85,7 @@ trial %>%
 - Load biostatR instead of gtsummary- then you won't have trouble with renv
 - Code to manipulate gtsummary tables and omit estimates above/below a certain threshold (e.g. unstable OR estimates):
 
-```{r }
+```{r, eval = FALSE}
 
 x <- trial %>% 
   gtsummary::tbl_uvregression(y = age, 
@@ -94,8 +94,9 @@ x <- trial %>%
 x
 ```
 
+Adjust `x$table_body` internals:
 
-```{r }
+```{r, eval = FALSE}
 
 x$table_body <- x$table_body %>%
   mutate(estimate = dplyr::case_when(
