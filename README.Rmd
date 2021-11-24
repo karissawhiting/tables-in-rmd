@@ -9,6 +9,9 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+library(tidyverse)
+library(gtsummary)
 ```
 
 # Coding Workshop: Tables in RMarkdown \n2021-11-18
@@ -63,6 +66,41 @@ knitr::opts_chunk$set(
 - flextable complex table: https://stackoverflow.com/questions/70059022/reproduce-a-complex-table-with-double-headesrs/70072503#70072503 
 - `bstfun::style_tbl_compact()`
 
-# Some Formatting/Spacing Functions for Word/PDF Outputs
+## Some Formatting Functions for Word/PDF Outputs
 
 - huxtable: `width(table)` <-  0.8
+- flextable: set table properties to autofit! This helps automatically pick a width
+
+```{r, eval = FALSE}
+
+trial %>%
+  tbl_summary() %>%
+  as_flex_table() %>%
+  flextable::set_table_properties(layout = "autofit")
+
+```
+
+## Other tips
+
+- Load biostatR instead of gtsummary- then you won't have trouble with renv
+- Code to manipulate gtsummary tables and omit estimates above/below a certain threshold (e.g. unstable OR estimates):
+
+```{r}
+
+x <- trial %>% 
+  gtsummary::tbl_uvregression(y = age, 
+                   method = lm)
+
+x
+
+
+x$table_body <- x$table_body %>%
+  mutate(estimate = dplyr::case_when(
+             estimate < 0 ~ NA_real_, 
+                     TRUE ~ estimate))
+
+x
+```
+
+
+
