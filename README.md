@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Coding Workshop: Tables in RMarkdown -11-18
+# Coding Workshop: Tables in RMarkdown 2021-11-18
 
 ## Pros and Cons of Table Packages
 
